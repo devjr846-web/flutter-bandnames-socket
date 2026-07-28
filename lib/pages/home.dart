@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 import '../services/socket_service.dart';
 
@@ -16,7 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Band> bands = [];
 
-  _handleActiveBands(dynamic payload) {
+  void _handleActiveBands(dynamic payload) {
     bands = (payload as List).map((band) => Band.fromMap(band)).toList();
     setState(() {});
   }
@@ -59,9 +60,18 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: bands.length,
-        itemBuilder: (context, index) => _bandTile(bands[index]),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: bands.length,
+                itemBuilder: (context, index) => _bandTile(bands[index]),
+              ),
+            ),
+            _showGraph(),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => addNewBand(),
@@ -152,5 +162,34 @@ class _HomePageState extends State<HomePage> {
     }
 
     Navigator.pop(context);
+  }
+
+  Widget _showGraph() {
+    if (bands.isEmpty) {
+      return const SizedBox(
+        height: 200,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final Map<String, double> dataMap = {
+      for (final band in bands) band.name: band.votes.toDouble(),
+    };
+
+    return SizedBox(
+      width: double.infinity,
+      height: 200,
+      child: PieChart(
+        dataMap: dataMap,
+        chartType: ChartType.ring,
+        animationDuration: const Duration(milliseconds: 800),
+        legendOptions: LegendOptions(
+          showLegendsInRow: false,
+          legendPosition: LegendPosition.right,
+          showLegends: true,
+          legendTextStyle: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
 }
