@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+// ignore: library_prefixes
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+// ignore: constant_identifier_names
 enum ServerStatus { Online, Offline, Connecting }
 
 class SocketService with ChangeNotifier {
@@ -31,6 +33,10 @@ class SocketService with ChangeNotifier {
       print('nuevo-mensaje: ');
       print('nombre: ' + data['nombre']);
       print('mensaje: ' + data['mensaje']);
+    });
+
+    _socket?.on('active-bands', (payload) {
+      print(payload);
     });
   }
 }

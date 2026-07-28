@@ -6,6 +6,10 @@ class Band {
   Band({required this.id, required this.name, this.votes = 0});
 
   factory Band.fromMap(Map<String, dynamic> map) {
-    return Band(id: map['id'], name: map['name'], votes: map['votes'] ?? 0);
+    return Band(
+      id: map.containsKey('id') ? map['id'] : 'no-id',
+      name: map.containsKey('name') ? map['name'] : 'no-name',
+      votes: map.containsKey('votes') ? map['votes'] : 0,
+    );
   }
 }
